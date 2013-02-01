@@ -1,0 +1,4 @@
+.waf*
+.DS*
+.lock*
+build/
