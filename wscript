@@ -47,6 +47,7 @@ def configure(conf):
 
     if conf.options.debug:
         conf.define ('NS3_LOG_ENABLE', 1)
+        conf.define ('NS3_ASSERT_ENABLE', 1)
         conf.define ('_DEBUG', 1)
         conf.env.append_value('CXXFLAGS', ['-O0', '-g3'])
     else:
@@ -57,6 +58,7 @@ def configure(conf):
 
     if conf.options.logging:
         conf.define ('NS3_LOG_ENABLE', 1)
+        conf.define ('NS3_ASSERT_ENABLE', 1)
 
 def build (bld):
     deps = 'BOOST BOOST_IOSTREAMS' + ' '.join (['ns3_'+dep for dep in ['core', 'network', 'internet', 'ndnSIM', 'topology-read', 'applications', 'mobility', 'visualizer']]).upper ()
