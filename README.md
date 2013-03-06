@@ -5,12 +5,23 @@ Custom version of NS-3 and specified version of ndnSIM needs to be installed.
 
 The code should also work with the latest version of ndnSIM, but it is not guaranteed.
 
-    git clone git@github.com:cawka/ns-3-dev-ndnSIM.git -b ns-3.16-ndnSIM ns-3
-    git clone git@github.com:NDN-Routing/ndnSIM.git -b v0.2.2 ns-3/src/ndnSIM
+    mkdir ns-dev
+    cd ns-dev
+
+    git clone git://github.com/cawka/ns-3-dev-ndnSIM.git -b ns-3.16-ndnSIM ns-3
+    git clone git://github.com/cawka/pybindgen.git pybindgen
+    git clone git://github.com/NDN-Routing/ndnSIM.git -b v0.2.8 ns-3/src/ndnSIM
+
+    git clone git://github.com/cawka/ndnSIM-sample-topologies.git ndnSIM-sample-topologies
 
     cd ns-3
-    ./waf configure
-    ./waf install
+    ./waf configure -d optimized
+    ./waf
+    sudo ./waf install
+
+    cd ../ndnSIM-sample-topologies
+
+After which you can proceed to compile and run the code
 
 For more information how to install NS-3 and ndnSIM, please refer to http://ndnsim.net website.
 
@@ -63,16 +74,49 @@ or
 
     LD_LIBRARY_PATH=/usr/local/lib ./waf --run <scenario_name>
 
-
-When running using ./waf, it is possible to run scenario with visualizer:
-
-    ./waf --run <scenario_name> --vis
-
 To run scenario using debugger, use the following command:
 
     gdb --args ./build/<scenario_name>
 
+
+Running with visualizer
+-----------------------
+
+There are several tricks to run scenarios in visualizer.  Before you can do it, you need to set up environment variables for python to find visualizer module.  The easiest way to do it using the following commands:
+
+    cd ns-dev/ns-3
+    ./waf shell
+
+After these command, you will have complete environment to run the vizualizer.
+
+The following will run scenario with visualizer:
+
+    ./waf --run <scenario_name> --vis
+
+or
+
+    PKG_LIBRARY_PATH=/usr/local/lib ./waf --run <scenario_name> --vis
+
+If you want to request automatic node placement, set up additional environment variable:
+
+    NS_VIS_ASSIGN=1 ./waf --run <scenario_name> --vis
+
+or
+
+    PKG_LIBRARY_PATH=/usr/local/lib NS_VIS_ASSIGN=1 ./waf --run <scenario_name> --vis
+
 Available simulations
 =====================
 
-*put here information how to run scenarios, and if available, brief description*
+Topology converter
+------------------
+
+To convert topologies from RocketFuel format and assign random bandwidths and delays for links, you can run the following:
+
+    ./run.py -s convert-topologies
+
+You can edit ``run.py`` script and ``scenarios/rocketfuel-maps-cch-to-annotaded.cc`` to modifiy topology conversion logic
+(e.g., you may want to assign different bandwidth range for "backbone-to-backbone" links).
+
+For more information about Rocketfuel topology files, please refer to http://www.cs.washington.edu/research/networking/rocketfuel/
+
