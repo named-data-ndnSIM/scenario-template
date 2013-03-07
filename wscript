@@ -56,6 +56,11 @@ def configure(conf):
     if conf.env["CXX"] == ["clang++"]:
         conf.env.append_value('CXXFLAGS', ['-fcolor-diagnostics'])
 
+    if conf.env.DEST_BINFMT == 'elf':
+        # All ELF platforms are impacted but only the gcc compiler has a flag to fix it.
+        if 'gcc' in (conf.env.CXX_NAME, conf.env.CC_NAME):
+            conf.env.append_value ('SHLIB_MARKER', '-Wl,--no-as-needed')
+
     if conf.options.logging:
         conf.define ('NS3_LOG_ENABLE', 1)
         conf.define ('NS3_ASSERT_ENABLE', 1)
