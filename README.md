@@ -8,18 +8,18 @@ The code should also work with the latest version of ndnSIM, but it is not guara
     mkdir ns-dev
     cd ns-dev
 
-    git clone git://github.com/cawka/ns-3-dev-ndnSIM.git -b ns-3.16-ndnSIM ns-3
+    git clone git://github.com/cawka/ns-3-dev-ndnSIM.git ns-3
     git clone git://github.com/cawka/pybindgen.git pybindgen
-    git clone git://github.com/NDN-Routing/ndnSIM.git -b v0.2.8 ns-3/src/ndnSIM
+    git clone git://github.com/NDN-Routing/ndnSIM.git ns-3/src/ndnSIM
 
-    git clone git://github.com/cawka/ndnSIM-sample-topologies.git ndnSIM-sample-topologies
+    git clone git://github.com/cawka/ndnSIM-scenario-template.git my-simulations
 
     cd ns-3
     ./waf configure -d optimized
     ./waf
     sudo ./waf install
 
-    cd ../ndnSIM-sample-topologies
+    cd ../my-simulations
 
 After which you can proceed to compile and run the code
 
