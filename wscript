@@ -25,6 +25,9 @@ def options(opt):
 
     opt.load("compiler_c compiler_cxx boost ns3")
 
+MANDATORY_NS3_MODULES = ['core', 'network', 'point-to-point', 'applications', 'mobility', 'ndnSIM']
+OTHER_NS3_MODULES = ['antenna', 'aodv', 'bridge', 'brite', 'buildings', 'click', 'config-store', 'csma', 'csma-layout', 'dsdv', 'dsr', 'emu', 'energy', 'fd-net-device', 'flow-monitor', 'internet', 'lte', 'mesh', 'mpi', 'netanim', 'nix-vector-routing', 'olsr', 'openflow', 'point-to-point-layout', 'propagation', 'spectrum', 'stats', 'tap-bridge', 'topology-read', 'uan', 'virtual-net-device', 'visualizer', 'wifi', 'wimax']
+
 def configure(conf):
     conf.load("compiler_cxx boost ns3")
 
@@ -36,8 +39,9 @@ def configure(conf):
         exit (1)
 
     try:
-        conf.check_ns3_modules("ndnSIM core network internet point-to-point topology-read applications mobility")
-        conf.check_ns3_modules("visualizer", mandatory = False)
+        conf.check_ns3_modules(MANDATORY_NS3_MODULES)
+        for module in OTHER_NS3_MODULES:
+            conf.check_ns3_modules(module, mandatory = False)
     except:
         Logs.error ("NS-3 or one of the required NS-3 modules not found")
         Logs.error ("NS-3 needs to be compiled and installed somewhere.  You may need also to set PKG_CONFIG_PATH variable in order for configure find installed NS-3.")
@@ -66,7 +70,7 @@ def configure(conf):
         conf.define ('NS3_ASSERT_ENABLE', 1)
 
 def build (bld):
-    deps = 'BOOST BOOST_IOSTREAMS' + ' '.join (['ns3_'+dep for dep in ['core', 'network', 'internet', 'ndnSIM', 'topology-read', 'applications', 'mobility', 'visualizer']]).upper ()
+    deps = 'BOOST BOOST_IOSTREAMS ' + ' '.join (['ns3_'+dep for dep in MANDATORY_NS3_MODULES + OTHER_NS3_MODULES]).upper ()
 
     common = bld.objects (
         target = "extensions",
