@@ -42,18 +42,6 @@ To configure in debug mode with all logging enabled
     ./waf configure --debug
 
 If you have installed NS-3 in a non-standard location, you may need to set up ``PKG_CONFIG_PATH`` variable.
-For example, if NS-3 is installed in /usr/local/, then the following command should be used to
-configure scenario
-
-    PKG_CONFIG_PATH=/usr/local/lib/pkgconfig ./waf configure
-
-or
-
-    PKG_CONFIG_PATH=/usr/local/lib/pkgconfig ./waf configure --logging
-
-or
-
-    PKG_CONFIG_PATH=/usr/local/lib/pkgconfig ./waf configure --debug
 
 Running
 =======
@@ -108,15 +96,8 @@ or
 Available simulations
 =====================
 
-Topology converter
-------------------
+<Scenario Name>
+---------------
 
-To convert topologies from RocketFuel format and assign random bandwidths and delays for links, you can run the following:
-
-    ./run.py -s convert-topologies
-
-You can edit ``run.py`` script and ``scenarios/rocketfuel-maps-cch-to-annotaded.cc`` to modifiy topology conversion logic
-(e.g., you may want to assign different bandwidth range for "backbone-to-backbone" links).
-
-For more information about Rocketfuel topology files, please refer to http://www.cs.washington.edu/research/networking/rocketfuel/
+Description
 

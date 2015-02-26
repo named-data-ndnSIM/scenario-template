@@ -5,9 +5,14 @@ APPNAME='template'
 
 from waflib import Build, Logs, Options, TaskGen
 import subprocess
+import os
 
 def options(opt):
-    opt.add_option('--debug',action='store_true',default=False,dest='debug',help='''debugging mode''')
+    opt.load(['compiler_c', 'compiler_cxx'])
+    opt.load(['default-compiler-flags',
+              'boost', 'ns3'],
+             tooldir=['.waf-tools'])
+
     opt.add_option('--logging',action='store_true',default=True,dest='logging',help='''enable logging in simulation scripts''')
     opt.add_option('--run',
                    help=('Run a locally built program; argument can be a program name,'
@@ -23,20 +28,20 @@ def options(opt):
                    help=('Enable time for the executed command'),
                    action="store_true", default=False, dest='time')
 
-    opt.load("compiler_c compiler_cxx boost ns3")
-
 MANDATORY_NS3_MODULES = ['core', 'network', 'point-to-point', 'applications', 'mobility', 'ndnSIM']
 OTHER_NS3_MODULES = ['antenna', 'aodv', 'bridge', 'brite', 'buildings', 'click', 'config-store', 'csma', 'csma-layout', 'dsdv', 'dsr', 'emu', 'energy', 'fd-net-device', 'flow-monitor', 'internet', 'lte', 'mesh', 'mpi', 'netanim', 'nix-vector-routing', 'olsr', 'openflow', 'point-to-point-layout', 'propagation', 'spectrum', 'stats', 'tap-bridge', 'topology-read', 'uan', 'virtual-net-device', 'visualizer', 'wifi', 'wimax']
 
 def configure(conf):
-    conf.load("compiler_cxx boost ns3")
+    conf.load(['compiler_c', 'compiler_cxx',
+               'default-compiler-flags',
+               'boost', 'ns3'])
 
-    conf.check_boost(lib='system iostreams')
-    boost_version = conf.env.BOOST_VERSION.split('_')
-    if int(boost_version[0]) < 1 or int(boost_version[1]) < 48:
-        Logs.error ("ndnSIM requires at least boost version 1.48")
-        Logs.error ("Please upgrade your distribution or install custom boost libraries (http://ndnsim.net/faq.html#boost-libraries)")
-        exit (1)
+    if not os.environ.has_key('PKG_CONFIG_PATH'):
+        os.environ['PKG_CONFIG_PATH'] = ':'.join([
+            '/usr/local/lib/pkgconfig',
+            '/opt/local/lib/pkgconfig'])
+    conf.check_cfg(package='libndn-cxx', args=['--cflags', '--libs'],
+                   uselib_store='NDN_CXX', mandatory=True)
 
     try:
         conf.check_ns3_modules(MANDATORY_NS3_MODULES)
@@ -52,36 +57,38 @@ def configure(conf):
     if conf.options.debug:
         conf.define ('NS3_LOG_ENABLE', 1)
         conf.define ('NS3_ASSERT_ENABLE', 1)
-        conf.define ('_DEBUG', 1)
-        conf.env.append_value('CXXFLAGS', ['-O0', '-g3'])
-    else:
-        conf.env.append_value('CXXFLAGS', ['-O3', '-g'])
-
-    if conf.env["CXX"] == ["clang++"]:
-        conf.env.append_value('CXXFLAGS', ['-fcolor-diagnostics'])
 
     if conf.env.DEST_BINFMT == 'elf':
         # All ELF platforms are impacted but only the gcc compiler has a flag to fix it.
         if 'gcc' in (conf.env.CXX_NAME, conf.env.CC_NAME):
-            conf.env.append_value ('SHLIB_MARKER', '-Wl,--no-as-needed')
+            conf.env.append_value('SHLIB_MARKER', '-Wl,--no-as-needed')
 
     if conf.options.logging:
-        conf.define ('NS3_LOG_ENABLE', 1)
-        conf.define ('NS3_ASSERT_ENABLE', 1)
+        conf.define('NS3_LOG_ENABLE', 1)
+        conf.define('NS3_ASSERT_ENABLE', 1)
 
 def build (bld):
-    deps = 'BOOST BOOST_IOSTREAMS ' + ' '.join (['ns3_'+dep for dep in MANDATORY_NS3_MODULES + OTHER_NS3_MODULES]).upper ()
+    deps = 'NDN_CXX ' + ' '.join (['ns3_'+dep for dep in MANDATORY_NS3_MODULES + OTHER_NS3_MODULES]).upper ()
 
     common = bld.objects (
         target = "extensions",
         features = ["cxx"],
-        source = bld.path.ant_glob(['extensions/**/*.cc']),
+        source = bld.path.ant_glob(['extensions/**/*.cc', 'extensions/**/*.cpp']),
         use = deps,
-        cxxflags = [bld.env.CXX11_CMD],
         )
 
     for scenario in bld.path.ant_glob (['scenarios/*.cc']):
         name = str(scenario)[:-len(".cc")]
+        app = bld.program (
+            target = name,
+            features = ['cxx'],
+            source = [scenario],
+            use = deps + " extensions",
+            includes = "extensions"
+            )
+
+    for scenario in bld.path.ant_glob (['scenarios/*.cpp']):
+        name = str(scenario)[:-len(".cpp")]
         app = bld.program (
             target = name,
             features = ['cxx'],
