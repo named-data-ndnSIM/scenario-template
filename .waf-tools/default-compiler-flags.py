@@ -99,17 +99,16 @@ class GccBasicFlags(CompilerFlags):
     """This class defines base flags that work for gcc and clang compiler"""
     def getDebugFlags(self, conf):
         flags = super(GccBasicFlags, self).getDebugFlags(conf)
-        flags['CXXFLAGS'] += ['-pedantic', '-Wall',
+        flags['CXXFLAGS'] += ['-Wall',
                               '-O0',
                               '-g3',
-                              '-Werror',
                               '-Wno-error=maybe-uninitialized', # Bug #1615
                              ]
         return flags
 
     def getOptimizedFlags(self, conf):
         flags = super(GccBasicFlags, self).getOptimizedFlags(conf)
-        flags['CXXFLAGS'] += ['-pedantic', '-Wall', '-O2', '-g']
+        flags['CXXFLAGS'] += ['-Wall', '-O2', '-g']
         return flags
 
 class GccFlags(GccBasicFlags):

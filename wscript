@@ -40,8 +40,6 @@ def configure(conf):
         os.environ['PKG_CONFIG_PATH'] = ':'.join([
             '/usr/local/lib/pkgconfig',
             '/opt/local/lib/pkgconfig'])
-    conf.check_cfg(package='libndn-cxx', args=['--cflags', '--libs'],
-                   uselib_store='NDN_CXX', mandatory=True)
 
     try:
         conf.check_ns3_modules(MANDATORY_NS3_MODULES)
@@ -68,7 +66,7 @@ def configure(conf):
         conf.define('NS3_ASSERT_ENABLE', 1)
 
 def build (bld):
-    deps = 'NDN_CXX ' + ' '.join (['ns3_'+dep for dep in MANDATORY_NS3_MODULES + OTHER_NS3_MODULES]).upper ()
+    deps =  ' '.join (['ns3_'+dep for dep in MANDATORY_NS3_MODULES + OTHER_NS3_MODULES]).upper ()
 
     common = bld.objects (
         target = "extensions",
