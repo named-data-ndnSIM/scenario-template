@@ -8,9 +8,9 @@ The code should also work with the latest version of ndnSIM, but it is not guara
     mkdir ndnSIM
     cd ndnSIM
 
-    git clone https://github.com/named-data-ndnSIM/ns-3-dev.git ns-3
-    git clone https://github.com/named-data-ndnSIM/pybindgen.git pybindgen
-    git clone -b ndnSIM-2.3 --recursive https://github.com/named-data-ndnSIM/ndnSIM ns-3/src/ndnSIM
+    git clone -b ndnSIM-2.5 https://github.com/named-data-ndnSIM/ns-3-dev.git ns-3
+    git clone -b 0.18.0 https://github.com/named-data-ndnSIM/pybindgen.git pybindgen
+    git clone -b ndnSIM-2.5 --recursive https://github.com/named-data-ndnSIM/ndnSIM ns-3/src/ndnSIM
 
     # Build and install NS-3 and ndnSIM
     cd ns-3
