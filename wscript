@@ -77,18 +77,8 @@ def build (bld):
         use = deps,
         )
 
-    for scenario in bld.path.ant_glob(['scenarios/*.cc']):
+    for scenario in bld.path.ant_glob(['scenarios/*.cc', 'scenarios/*.cpp']):
         name = scenario.change_ext('').path_from(bld.path.find_node('scenarios/').get_bld())
-        app = bld.program (
-            target = name,
-            features = ['cxx'],
-            source = [scenario],
-            use = deps + " extensions",
-            includes = "extensions"
-            )
-
-    for scenario in bld.path.ant_glob(['scenarios/*.cpp']):
-        name = scenario.path_from(bld.path)
         app = bld.program (
             target = name,
             features = ['cxx'],
