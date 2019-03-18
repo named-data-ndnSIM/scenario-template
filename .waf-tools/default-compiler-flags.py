@@ -143,7 +143,7 @@ class GccBasicFlags(CompilerFlags):
                               '-pedantic',
                               '-Wall',
                               '-Wextra',
-                              '-Werror',
+                              # '-Werror',
                               '-Wnon-virtual-dtor',
                               '-Wno-error=deprecated-declarations', # Bug #3795
                               '-Wno-error=maybe-uninitialized', # Bug #1615
