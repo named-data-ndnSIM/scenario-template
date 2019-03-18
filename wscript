@@ -61,6 +61,8 @@ def configure(conf):
         if 'gcc' in (conf.env.CXX_NAME, conf.env.CC_NAME):
             conf.env.append_value('SHLIB_MARKER', '-Wl,--no-as-needed')
 
+    conf.check_compiler_flags()
+            
     if conf.options.logging:
         conf.define('NS3_LOG_ENABLE', 1)
         conf.define('NS3_ASSERT_ENABLE', 1)
